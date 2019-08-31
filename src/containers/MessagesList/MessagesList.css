@@ -1,0 +1,19 @@
+.messages-list {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  background-color: #89a3ae;
+  width: 70vw;
+  max-width: 70%;
+  height: 100vh;
+  max-height: 100%;
+  margin: 0;
+  padding: 10px 30px 10px 20px;
+  padding-top: 10px;
+  overflow-y: hidden;
+  box-sizing: border-box;
+}
+.messages-list:hover {
+  overflow-y: auto;
+  padding-right: 13px;
+}

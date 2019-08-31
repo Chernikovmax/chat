@@ -1,0 +1,41 @@
+.users-list-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 70vh;
+  background-color: #cdd9fe;
+}
+
+.users-list-title {
+  font-weight: bold;
+  font-size: 18px;
+  height: 30px;
+  color: #3bcd0e;
+  margin: 0;
+  padding: 10px 10px;
+}
+
+.users-list {
+  width: 100%;
+  height: calc(100% - 30px);
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0 0 10px 0;
+  text-align: left;
+  padding-left: 35%;
+  overflow: hidden;
+  background-color: #e1e9fe;
+}
+
+.users-list:hover {
+  overflow-y: auto;
+}
+
+.users-list__item {
+  list-style-type: none;
+  font-style: italic;
+  font-weight: 500;
+  font-size: 14px;
+}
