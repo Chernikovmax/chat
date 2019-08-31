@@ -65,7 +65,7 @@ const users = [
   "Kenny Mccormick"
 ];
 
-const URL = "ws://localhost:8080";
+const URL = "wss://localhost:8080";
 
 class App extends Component {
   state = {
@@ -93,6 +93,10 @@ class App extends Component {
       // On message received - push it to the list of messages
       const receivedMessage = JSON.parse(event.data);
       this.addMessage(receivedMessage);
+    };
+    this.ws.error = err => {
+      // Print error in console
+      console.error(err.message);
     };
   }
 
