@@ -10,7 +10,7 @@ const messages = [
     userName: "Eric Cartman",
     messageDate: `${new Date()}`,
     messageText:
-      "Fatass Amet deserunt eu occaecat velit. Ad eiusmod cillum sit magna aliqua occaecat officia. Incididunt sint esse ad ullamco cupidatat ex incididunt proident incididunt. Laborum ullamco enim amet ad reprehenderit magna in dolore eiusmod aute. Cupidatat minim tempor minim elit ad amet cillum dolore culpa consectetur."
+      "Amet deserunt eu occaecat velit. Ad eiusmod cillum sit magna aliqua occaecat officia. Incididunt sint esse ad ullamco cupidatat ex incididunt proident incididunt. Laborum ullamco enim amet ad reprehenderit magna in dolore eiusmod aute. Cupidatat minim tempor minim elit ad amet cillum dolore culpa consectetur."
   },
   {
     userName: "Eric Cartman",
@@ -27,7 +27,7 @@ const messages = [
     userName: "Eric Cartman",
     messageDate: `${new Date()}`,
     messageText:
-      "Fatass Amet deserunt eu occaecat velit. Ad eiusmod cillum sit magna aliqua occaecat officia. Incididunt sint esse ad ullamco cupidatat ex incididunt proident incididunt. Laborum ullamco enim amet ad reprehenderit magna in dolore eiusmod aute. Cupidatat minim tempor minim elit ad amet cillum dolore culpa consectetur."
+      "  Amet deserunt eu occaecat velit. Ad eiusmod cillum sit magna aliqua occaecat officia. Incididunt sint esse ad ullamco cupidatat ex incididunt proident incididunt. Laborum ullamco enim amet ad reprehenderit magna in dolore eiusmod aute. Cupidatat minim tempor minim elit ad amet cillum dolore culpa consectetur."
   },
   {
     userName: "Eric Cartman",
@@ -44,7 +44,7 @@ const messages = [
     userName: "Eric Cartman",
     messageDate: `${new Date()}`,
     messageText:
-      "Fatass Amet deserunt eu occaecat velit. Ad eiusmod cillum sit magna aliqua occaecat officia. Incididunt sint esse ad ullamco cupidatat ex incididunt proident incididunt. Laborum ullamco enim amet ad reprehenderit magna in dolore eiusmod aute. Cupidatat minim tempor minim elit ad amet cillum dolore culpa consectetur."
+      "  Amet deserunt eu occaecat velit. Ad eiusmod cillum sit magna aliqua occaecat officia. Incididunt sint esse ad ullamco cupidatat ex incididunt proident incididunt. Laborum ullamco enim amet ad reprehenderit magna in dolore eiusmod aute. Cupidatat minim tempor minim elit ad amet cillum dolore culpa consectetur."
   },
   {
     userName: "Eric Cartman",
@@ -76,7 +76,7 @@ class App extends Component {
   ws = new WebSocket(URL);
 
   componentDidMount() {
-    this.ws.onopen = () => {
+    /*    this.ws.onopen = () => {
       // On connection alert in console
       console.log("Successfully connected");
     };
@@ -97,7 +97,7 @@ class App extends Component {
     this.ws.error = err => {
       // Print error in console
       console.error(err.message);
-    };
+    }; */
   }
 
   addMessage = message => {
