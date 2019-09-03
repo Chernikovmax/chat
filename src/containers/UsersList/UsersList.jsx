@@ -9,10 +9,12 @@ export class UsersList extends Component {
   }
 
   componentDidMount() {
+    if (!this.props.users.length) return;
     this.focusBottom();
   }
 
   componentDidUpdate() {
+    if (!this.props.users.length) return;
     this.focusBottom();
   }
 

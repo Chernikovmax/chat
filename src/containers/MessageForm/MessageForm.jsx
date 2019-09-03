@@ -12,8 +12,8 @@ export class MessageForm extends Component {
     // Cancels page reloading
     event.preventDefault();
     const newMessage = {
-      userName: "Sample nickname",
-      messageDate: new Date(),
+      userName: this.props.userName,
+      messageDate: Date.now(),
       messageText: this.state.message
     };
     this.props.onSubmitMessage(newMessage);
@@ -35,11 +35,9 @@ export class MessageForm extends Component {
           value={this.state.message}
           onChange={this.writeMessageInState}
         ></textarea>
-        <input
-          className="message-form__submit-btn"
-          type="submit"
-          value="Send Message"
-        />
+        <button className="message-form__submit-btn" type="submit">
+          Send Message
+        </button>
       </form>
     );
   }

@@ -7,7 +7,7 @@ export function UserMessage(props) {
     <li className="message">
       <div className="message-info">
         <span className="message__user-name">{userName}</span>
-        <span>({messageDate})</span>
+        <span className="message__date">{messageDate}</span>
       </div>
       <p className="message__text">{messageText}</p>
     </li>

@@ -18,6 +18,10 @@
   color: #1f3870;
 }
 
+.message__date {
+  font-size: 10px;
+}
+
 .message__text {
   font-weight: bold;
   margin: 5px 0;
