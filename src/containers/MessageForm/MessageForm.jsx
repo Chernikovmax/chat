@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
+import moment from "moment";
+import uuid from "uuid";
 import "./MessageForm.css";
 
 export class MessageForm extends Component {
@@ -11,9 +13,11 @@ export class MessageForm extends Component {
   submitMessage = event => {
     // Cancels page reloading
     event.preventDefault();
+    let dateNow = moment();
     const newMessage = {
+      messageId: `${uuid.v4()}`,
       userName: this.props.userName,
-      messageDate: Date.now(),
+      messageDate: dateNow,
       messageText: this.state.message
     };
     this.props.onSubmitMessage(newMessage);
@@ -34,6 +38,7 @@ export class MessageForm extends Component {
           placeholder={"Enter new message here"}
           value={this.state.message}
           onChange={this.writeMessageInState}
+          autoFocus={true}
         ></textarea>
         <button className="message-form__submit-btn" type="submit">
           Send Message

@@ -15,11 +15,12 @@
 .message__user-name {
   font-weight: bold;
   margin-right: 10px;
-  color: #1f3870;
+  color: #7d98d4;
 }
 
 .message__date {
   font-size: 10px;
+  color: #bfbfbf;
 }
 
 .message__text {

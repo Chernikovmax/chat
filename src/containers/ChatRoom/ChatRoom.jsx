@@ -16,7 +16,6 @@ export class ChatRoom extends Component {
 
   componentDidMount() {
     this.socket.on("message", message => {
-      console.log("This is an received message string:", message);
       this.setState({ messages: [...this.state.messages, message] });
     });
   }
