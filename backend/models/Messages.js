@@ -1,10 +1,10 @@
 const { Schema, model } = require("mongoose");
 
 // Creating a scheme describing how messages will be looks like in DB.
-export const messageModelSchema = new Schema({
-  messageId: {
-    type: String,
-    required: true
+const messageModelSchema = new Schema({
+  _id: {
+    type: Schema.ObjectId,
+    auto: true
   },
   userName: {
     type: String,

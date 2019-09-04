@@ -40,7 +40,7 @@ export class MessagesList extends Component {
                 userName={message.userName}
                 messageDate={message.messageDate}
                 messageText={message.messageText}
-                key={message.messageId}
+                key={message._id}
               />
             );
           })}

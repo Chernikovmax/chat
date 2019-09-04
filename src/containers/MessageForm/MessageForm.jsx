@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import moment from "moment";
-import uuid from "uuid";
 import "./MessageForm.css";
 
 export class MessageForm extends Component {
@@ -15,7 +14,6 @@ export class MessageForm extends Component {
     event.preventDefault();
     let dateNow = moment();
     const newMessage = {
-      messageId: `${uuid.v4()}`,
       userName: this.props.userName,
       messageDate: dateNow,
       messageText: this.state.message
