@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import RegisterPage from "../RegisterPage/RegisterPage";
-import { ChatRoom } from "../ChatRoom";
+import ChatRoom from "../ChatRoom/ChatRoom";
 import "./App.css";
 
 import { BrowserRouter, Route, Switch } from "react-router-dom";

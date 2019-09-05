@@ -11,35 +11,43 @@ const PORT = 3030;
 const MessagesModel = require("./models/Messages");
 // Import model for adding users to the DB
 const User = require("./models/Users");
+// Import model for creating Rooms collection and Rooms that will be placed in it on DB
+const Room = require("./models/Rooms");
+
 // Import database connection
 const dbConnect = require("./dbConnection");
 
 const actions = require("./actions");
 const userRegistrationService = require("./services/userRegistrationService");
+const roomDataService = require("./services/roomDataService");
 // Defined listening of the events and handles them
-io.on("connection", client => {
+io.on("connection", async client => {
   console.log("user connected");
-
+  const newChatRoom = new Room();
+  newChatRoom.save();
+  // console.log(
+  //   "CHATROOM!!!!!!!!!!!!!!! messages:",
+  //   await Room.findById(newChatRoom.messages)
+  // );
+  client.emit();
   // Adding new user to the DB
   client.on("action", async action => {
     switch (action.type) {
       case "REGISTER_USER_REQUEST":
-        console.log(action);
-
         return userRegistrationService(action.user).then(
           user => io.emit("action", actions.registerUserRequestSuccess(user)),
           err => io.emit("action", actions.registerUserRequestFailure(err))
         );
+
+      case "GET_ROOM_DATA_REQUEST":
+        return roomDataService(newChatRoom._id).then(
+          roomData =>
+            io.emit("action", actions.getRoomDataRequestSuccess(roomData)),
+          err => io.emit("action", actions.getRoomDataRequestFailure(err))
+        );
       default:
         return;
     }
-
-    // io.emit("message", {
-    //   _id: client.id,
-    //   userName: "Server report",
-    //   messageDate: Date.now(),
-    //   messageText: `User "${userName}" just connected`
-    // });
   });
 
   // There is also a special disconnect event that gets fire each time a user closes the tab.
@@ -56,7 +64,7 @@ io.on("connection", client => {
     try {
       await dbConnect;
       const newMessage = new MessagesModel(receivedMessage);
-      await newMessage.save();
+      await newChatRoom.save(newMessage.save());
     } catch (error) {
       console.error(error);
     }

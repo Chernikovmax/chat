@@ -2,9 +2,11 @@ import React, { Component } from "react";
 import "./RegisterPage.css";
 import cx from "classnames";
 import { connect } from "react-redux";
+import { registerUserRequest, getRoomDataRequest } from "../../redux/actions";
+
 import { Redirect } from "react-router-dom";
 import { ROOM_PAGE_GENERAL } from "../../routes";
-import { registerUserRequest } from "../../redux/actions";
+
 import { LoadSpinner } from "../../components/loadSpinner";
 import { WarningMessage } from "../../components/WarningMessage";
 
@@ -21,6 +23,7 @@ class RegisterPage extends Component {
       return this.setState({ isErrorInInput: true });
     const { registerUserRequest } = this.props;
     registerUserRequest(this.state.name);
+    getRoomDataRequest();
   };
 
   setName = event => {
@@ -33,12 +36,27 @@ class RegisterPage extends Component {
     const {
       isRequestingRegistration,
       isErrorOnRegister,
-      error,
-      isRegistered
+      errorMessageFromRegistration,
+      isRegistered,
+      isRoomDataReceived,
+      isErrorOnRequestRoomData,
+      errorMessageFromRoomDataRequest
     } = this.props;
     const { isErrorInInput } = this.state;
 
-    if (isRegistered) return <Redirect to={ROOM_PAGE_GENERAL} />;
+    if (isRegistered && !isRoomDataReceived) {
+      return (
+        <div className="spinner-container">
+          <span className="spinner-container__text">
+            Chat Room is preparing for you...
+          </span>
+          <LoadSpinner />
+        </div>
+      );
+    }
+
+    if (isRegistered && isRoomDataReceived)
+      return <Redirect to={ROOM_PAGE_GENERAL} />;
 
     return (
       <div className="registration-container">
@@ -61,7 +79,16 @@ class RegisterPage extends Component {
         </form>
         {isErrorOnRegister && (
           <div className="error-from-server">
-            <WarningMessage messageText={error.message} />
+            <WarningMessage
+              messageText={errorMessageFromRegistration.message}
+            />
+          </div>
+        )}
+        {isErrorOnRequestRoomData && (
+          <div className="error-from-server">
+            <WarningMessage
+              messageText={errorMessageFromRoomDataRequest.message}
+            />
           </div>
         )}
       </div>
@@ -73,11 +100,17 @@ const mapStateToProps = state => ({
   isRequestingRegistration: state.registrationReducer.isRequestingRegistration,
   isRegistered: state.registrationReducer.isRegistered,
   isErrorOnRegister: state.registrationReducer.isErrorOnRegister,
-  error: state.registrationReducer.error
+  errorMessageFromRegistration: state.registrationReducer.error,
+
+  isRequestingRoomData: state.roomReducer.isRequestingRoomData,
+  isRoomDataReceived: state.roomReducer.isDataReceived,
+  isErrorOnRequestRoomData: state.roomReducer.isErrorOnRequest,
+  errorMessageFromRoomDataRequest: state.roomReducer.error
 });
 
 const mapDispatchToProps = {
-  registerUserRequest: registerUserRequest
+  registerUserRequest: registerUserRequest,
+  getRoomDataRequest: getRoomDataRequest
 };
 
 export default connect(
