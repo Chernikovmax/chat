@@ -1,40 +1,42 @@
 import React, { Component } from "react";
+import { connect } from "react-redux";
 import { ChatHeader } from "../ChatHeader/ChatHeader";
 import { MessagesList } from "../MessagesList";
 import { UsersList } from "../UsersList";
 import { MessageForm } from "../MessageForm";
-import io from "socket.io-client";
 import "./ChatRoom.css";
 
-export class ChatRoom extends Component {
+class ChatRoom extends Component {
   state = {
     name: this.props.name,
     messages: []
   };
-
-  socket = io("http://localhost:3030/");
+  // const {match: { params: { roomName } }} = this.props;
 
   componentDidMount() {
-    this.socket.on("message", message => {
+    const { socket } = this.props;
+    socket.on("message", message => {
       this.setState({ messages: [...this.state.messages, message] });
     });
   }
 
   componentWillUnmount() {
-    this.socket.close();
+    const { socket } = this.props;
+    socket.close();
   }
 
   handleSubmitMessage = messageObject => {
-    this.socket.emit("message", messageObject);
+    const { socket } = this.props;
+    socket.emit("message", messageObject);
   };
 
   render() {
-    const { users } = this.props;
+    const { user } = this.props;
     return (
       <div className="chat-room">
         <MessagesList messages={this.state.messages} />
         <div className="side-block">
-          <ChatHeader chatName={"General chat room"} />
+          <ChatHeader chatName={"General"} userName={user.userName} />
           <UsersList users={users} />
           <MessageForm
             onSubmitMessage={this.handleSubmitMessage}
@@ -45,3 +47,17 @@ export class ChatRoom extends Component {
     );
   }
 }
+
+const mapStateToProps = state => ({
+  isRequestingRegistration: state.registrationReducer.isRequestingRegistration,
+  isRegistered: state.registrationReducer.isRegistered,
+  isErrorOnRegister: state.registrationReducer.isErrorOnRegister,
+  user: state.registrationReducer.user
+});
+
+const mapDispatchToProps = {};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(ChatRoom);

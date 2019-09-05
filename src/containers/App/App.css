@@ -1,2 +1,12 @@
 .app {
 }
+
+.input--error {
+  background-color: tomato;
+  border: 2px solid #f04c3d;
+}
+
+.error-from-server {
+  padding: 10px 5px;
+  border: 2px solid #f04c3d;
+}

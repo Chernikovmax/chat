@@ -9,12 +9,38 @@ const io = require("socket.io")(server);
 const PORT = 3030;
 // Import model for sending messages to the DB
 const MessagesModel = require("./models/Messages");
+// Import model for adding users to the DB
+const User = require("./models/Users");
 // Import database connection
 const dbConnect = require("./dbConnection");
 
+const actions = require("./actions");
+const userRegistrationService = require("./services/userRegistrationService");
 // Defined listening of the events and handles them
 io.on("connection", client => {
   console.log("user connected");
+
+  // Adding new user to the DB
+  client.on("action", async action => {
+    switch (action.type) {
+      case "REGISTER_USER_REQUEST":
+        console.log(action);
+
+        return userRegistrationService(action.user).then(
+          user => io.emit("action", actions.registerUserRequestSuccess(user)),
+          err => io.emit("action", actions.registerUserRequestFailure(err))
+        );
+      default:
+        return;
+    }
+
+    // io.emit("message", {
+    //   _id: client.id,
+    //   userName: "Server report",
+    //   messageDate: Date.now(),
+    //   messageText: `User "${userName}" just connected`
+    // });
+  });
 
   // There is also a special disconnect event that gets fire each time a user closes the tab.
   client.on("disconnect", () => {
