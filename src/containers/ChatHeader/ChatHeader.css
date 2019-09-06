@@ -11,3 +11,7 @@
   color: #20202d;
   margin: 0;
 }
+
+.chat-header__user-name {
+  color: #0e4dc4;
+}

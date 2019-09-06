@@ -16,7 +16,7 @@ export const roomReducer = (state = initialState, action) => {
   switch (action.type) {
     case GET_ROOM_DATA_REQUEST:
       return {
-        ...state,
+        ...initialState,
         isRequestingRoomData: true
       };
 

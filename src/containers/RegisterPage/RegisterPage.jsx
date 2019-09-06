@@ -4,8 +4,8 @@ import cx from "classnames";
 import { connect } from "react-redux";
 import { registerUserRequest, getRoomDataRequest } from "../../redux/actions";
 
-import { Redirect } from "react-router-dom";
-import { ROOM_PAGE_GENERAL } from "../../routes";
+import { getCookie, deleteCookie } from "../../utils/browserCookies";
+import { ROOM_PAGE } from "../../routes";
 
 import { LoadSpinner } from "../../components/loadSpinner";
 import { WarningMessage } from "../../components/WarningMessage";
@@ -16,14 +16,34 @@ class RegisterPage extends Component {
     isErrorInInput: false
   };
 
+  componentDidUpdate(prevProps) {
+    const { history, isRoomDataReceived, roomData } = this.props;
+    if (
+      prevProps.isRoomDataReceived !== isRoomDataReceived &&
+      isRoomDataReceived
+    ) {
+      const { roomId } = roomData;
+      history.push(ROOM_PAGE.replace(":roomName", roomId));
+    }
+  }
+
   handleSubmitName = event => {
     event.preventDefault();
     const { name } = this.state;
     if (name.length < 6 || name.length > 20)
-      return this.setState({ isErrorInInput: true });
-    const { registerUserRequest } = this.props;
+      return this.setState({
+        isErrorInInput: true
+      });
+    const { registerUserRequest, getRoomDataRequest } = this.props;
     registerUserRequest(this.state.name);
-    getRoomDataRequest();
+    // If the certain chat room id record exist in cookie, use it to load room's data
+    const roomToRedirect = getCookie("savedRoomId");
+    if (roomToRedirect) {
+      getRoomDataRequest(roomToRedirect, name);
+      deleteCookie("savedRoomId");
+    } else {
+      getRoomDataRequest();
+    }
   };
 
   setName = event => {
@@ -55,9 +75,6 @@ class RegisterPage extends Component {
       );
     }
 
-    if (isRegistered && isRoomDataReceived)
-      return <Redirect to={ROOM_PAGE_GENERAL} />;
-
     return (
       <div className="registration-container">
         {isRequestingRegistration && <LoadSpinner />}
@@ -79,16 +96,12 @@ class RegisterPage extends Component {
         </form>
         {isErrorOnRegister && (
           <div className="error-from-server">
-            <WarningMessage
-              messageText={errorMessageFromRegistration.message}
-            />
+            <WarningMessage messageText={errorMessageFromRegistration} />
           </div>
         )}
         {isErrorOnRequestRoomData && (
           <div className="error-from-server">
-            <WarningMessage
-              messageText={errorMessageFromRoomDataRequest.message}
-            />
+            <WarningMessage messageText={errorMessageFromRoomDataRequest} />
           </div>
         )}
       </div>
@@ -102,6 +115,7 @@ const mapStateToProps = state => ({
   isErrorOnRegister: state.registrationReducer.isErrorOnRegister,
   errorMessageFromRegistration: state.registrationReducer.error,
 
+  roomData: state.roomReducer.roomData,
   isRequestingRoomData: state.roomReducer.isRequestingRoomData,
   isRoomDataReceived: state.roomReducer.isDataReceived,
   isErrorOnRequestRoomData: state.roomReducer.isErrorOnRequest,

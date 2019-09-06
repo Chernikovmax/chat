@@ -3,14 +3,12 @@ const { Schema, model } = require("mongoose");
 // Creating a scheme describing how messages will be looks like in DB.
 const UserModelSchema = new Schema({
   _id: {
-    type: Schema.ObjectId,
-    auto: true
+    type: String,
+    required: true
   },
   userName: {
     type: String,
-    required: true,
-    min: 6,
-    max: 60
+    required: true
   }
 });
 

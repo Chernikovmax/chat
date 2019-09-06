@@ -20,30 +20,50 @@ const dbConnect = require("./dbConnection");
 const actions = require("./actions");
 const userRegistrationService = require("./services/userRegistrationService");
 const roomDataService = require("./services/roomDataService");
+
+// Definition of the storage where will be placed our socket connections by connection ids as keys
+const connectionsStore = {};
 // Defined listening of the events and handles them
 io.on("connection", async client => {
+  connectionsStore[client.id] = client;
+
   console.log("user connected");
   const newChatRoom = new Room();
   newChatRoom.save();
-  // console.log(
-  //   "CHATROOM!!!!!!!!!!!!!!! messages:",
-  //   await Room.findById(newChatRoom.messages)
-  // );
+
   client.emit();
   // Adding new user to the DB
   client.on("action", async action => {
     switch (action.type) {
       case "REGISTER_USER_REQUEST":
-        return userRegistrationService(action.user).then(
-          user => io.emit("action", actions.registerUserRequestSuccess(user)),
-          err => io.emit("action", actions.registerUserRequestFailure(err))
+        return userRegistrationService(client.id, action.user).then(
+          async user => {
+            newChatRoom.users.push(client.id);
+            await newChatRoom.save();
+            client.emit("action", actions.registerUserRequestSuccess(user));
+          },
+          err => client.emit("action", actions.registerUserRequestFailure(err))
         );
 
       case "GET_ROOM_DATA_REQUEST":
-        return roomDataService(newChatRoom._id).then(
-          roomData =>
-            io.emit("action", actions.getRoomDataRequestSuccess(roomData)),
-          err => io.emit("action", actions.getRoomDataRequestFailure(err))
+        // In case we get "acton.roomId" we also get "action.userName"
+        return (action.roomId
+          ? roomDataService(action.roomId, client.id)
+          : roomDataService(newChatRoom._id)
+        ).then(
+          async roomData => {
+            const roomUsersToNotify = await Room.findById(roomData.roomId);
+            // Getting array of socket connection ids in room
+            const { users } = roomUsersToNotify;
+            users.forEach(socketId =>
+              // Sending uploaded room data to every user in needed room
+              connectionsStore[socketId].emit(
+                "action",
+                actions.getRoomDataRequestSuccess(roomData)
+              )
+            );
+          },
+          err => client.emit("action", actions.getRoomDataRequestFailure(err))
         );
       default:
         return;
@@ -52,6 +72,8 @@ io.on("connection", async client => {
 
   // There is also a special disconnect event that gets fire each time a user closes the tab.
   client.on("disconnect", () => {
+    // Deleting a connection from the storage on disconnect
+    delete connectionsStore[client.id];
     console.log(`User "${client.id}" was disconnected...`);
   });
 

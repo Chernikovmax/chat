@@ -16,7 +16,7 @@ export const registrationReducer = (state = initialState, action) => {
   switch (action.type) {
     case REGISTER_USER_REQUEST:
       return {
-        ...state,
+        ...initialState,
         isRequestingRegistration: true
       };
 
