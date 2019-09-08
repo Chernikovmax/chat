@@ -2,33 +2,28 @@ const dbConnect = require("../dbConnection");
 const Room = require("../models/Rooms");
 const User = require("../models/Users");
 
-module.exports = async (roomId, userSocketId = null) => {
+module.exports = async (roomId, userSocketId) => {
   try {
     await dbConnect;
 
     // Searching needed room
     const desiredRoom = await Room.findById(roomId);
+    console.log("DESIREDROOOOM", desiredRoom);
+    const currentUser = await User.find({ clientId: userSocketId });
+    desiredRoom.users.push({
+      userName: currentUser[0].userName,
+      clientId: currentUser[0].clientId
+    });
+    await desiredRoom.save();
 
-    // If "userSocketId" was given that means it's the case we need to add new user in existing room
-    if (userSocketId) {
-      desiredRoom.users.push(userSocketId);
-      await desiredRoom.save();
-    }
+    // const arrayOfNames = [];
 
-    const arrayOfNames = [];
+    // // Going through the array of ids to get usernames in the desired room
+    // for (let i = 1; i < desiredRoom.users.length; i++) {
+    //   arrayOfNames.push(desiredRoom.users[i].userName);
+    // }
 
-    // Going through the array of ids to get usernames in the desired room
-    for (let i = 0; i < desiredRoom.users.length; i++) {
-      const user = await User.findById(desiredRoom.users[i]);
-      arrayOfNames.push(user.userName);
-    }
-
-    console.log("Array", arrayOfNames);
-    return {
-      roomId: roomId,
-      roomMessages: desiredRoom.messages,
-      roomUsers: arrayOfNames
-    };
+    return desiredRoom;
   } catch (error) {
     console.error(error);
   }

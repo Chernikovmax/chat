@@ -22,8 +22,8 @@ class RegisterPage extends Component {
       prevProps.isRoomDataReceived !== isRoomDataReceived &&
       isRoomDataReceived
     ) {
-      const { roomId } = roomData;
-      history.push(ROOM_PAGE.replace(":roomName", roomId));
+      const { _id } = roomData;
+      history.push(ROOM_PAGE.replace(":roomName", _id));
     }
   }
 

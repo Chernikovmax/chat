@@ -5,6 +5,5 @@ export const GET_ROOM_DATA_REQUEST_FAILURE = "GET_ROOM_DATA_REQUEST_FAILURE";
 export const getRoomDataRequest = (roomId = null, userName) => ({
   type: GET_ROOM_DATA_REQUEST,
   meta: { remote: true },
-  roomId,
-  userName
+  roomId
 });

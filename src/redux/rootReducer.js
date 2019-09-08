@@ -1,6 +1,7 @@
 import { combineReducers } from "redux";
-import { registrationReducer, roomReducer } from "./reducers/";
+import { registrationReducer, roomReducer, messagesReducer } from "./reducers/";
 export const rootReducer = combineReducers({
   registrationReducer,
-  roomReducer
+  roomReducer,
+  messagesReducer
 });

@@ -1,7 +1,8 @@
 import {
   GET_ROOM_DATA_REQUEST,
   GET_ROOM_DATA_REQUEST_SUCCESS,
-  GET_ROOM_DATA_REQUEST_FAILURE
+  GET_ROOM_DATA_REQUEST_FAILURE,
+  SEND_MESSAGE
 } from "../actions";
 
 const initialState = {
@@ -14,6 +15,16 @@ const initialState = {
 
 export const roomReducer = (state = initialState, action) => {
   switch (action.type) {
+    case SEND_MESSAGE:
+      const { messages } = state.roomData;
+      return {
+        ...state,
+        roomData: {
+          ...state.roomData,
+          messages: [...messages, action.newMessage]
+        }
+      };
+
     case GET_ROOM_DATA_REQUEST:
       return {
         ...initialState,

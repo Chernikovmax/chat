@@ -1,9 +1,9 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { getRoomDataRequest } from "../../redux/actions";
+import { getRoomDataRequest, sendMessageRequest } from "../../redux/actions";
 
 import { START_PAGE } from "../../routes";
-import { setCookie, getCookie } from "../../utils/browserCookies";
+import { setCookie } from "../../utils/browserCookies";
 import { ChatHeader } from "../ChatHeader/ChatHeader";
 import { MessagesList } from "../MessagesList";
 import { UsersList } from "../UsersList";
@@ -17,9 +17,7 @@ class ChatRoom extends Component {
       history,
       match: {
         params: { roomName }
-      },
-      roomData,
-      getRoomDataRequest
+      }
     } = this.props;
 
     // Redirect to register page when we are trying to load a link to certain chat without register in room
@@ -30,20 +28,26 @@ class ChatRoom extends Component {
   }
 
   handleSubmitMessage = messageObject => {
-    const { socket } = this.props;
-    socket.emit("message", messageObject);
+    const {
+      sendMessageRequest,
+      roomData: { _id }
+    } = this.props;
+    sendMessageRequest(messageObject, _id);
   };
 
   render() {
-    const { user, roomData } = this.props;
+    const { user, roomData, messageState } = this.props;
     if (!user || !roomData) return null;
-    const { roomId, roomMessages, roomUsers } = roomData;
+    const { _id, messages, users } = roomData;
+    if (messageState.isMessageSent) {
+      getRoomDataRequest(roomData._id);
+    }
     return (
       <div className="chat-room">
-        <MessagesList messages={roomMessages} />
+        <MessagesList messages={messages} />
         <div className="side-block">
-          <ChatHeader chatName={roomId} userName={user.userName} />
-          <UsersList users={roomUsers} />
+          <ChatHeader chatName={_id} userName={user.userName} />
+          <UsersList users={users} />
           <MessageForm
             onSubmitMessage={this.handleSubmitMessage}
             userName={user.userName}
@@ -56,10 +60,11 @@ class ChatRoom extends Component {
 
 const mapStateToProps = state => ({
   user: state.registrationReducer.user,
-  roomData: state.roomReducer.roomData
+  roomData: state.roomReducer.roomData,
+  messageState: state.messagesReducer
 });
 
-const mapDispatchToProps = { getRoomDataRequest };
+const mapDispatchToProps = { getRoomDataRequest, sendMessageRequest };
 
 export default connect(
   mapStateToProps,

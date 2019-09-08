@@ -7,8 +7,8 @@ export function setCookie(name, value) {
 
 // Usage example:
 // setCookie("user", "John", { secure: true, "max-age": 3600 });
-
 export function getCookie(name) {
+  /* eslint-disable */
   let matches = document.cookie.match(
     new RegExp(
       "(?:^|; )" +
@@ -16,6 +16,7 @@ export function getCookie(name) {
         "=([^;]*)"
     )
   );
+
   return matches ? decodeURIComponent(matches[1]) : undefined;
 }
 

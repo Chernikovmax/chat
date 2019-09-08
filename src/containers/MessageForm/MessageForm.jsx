@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import moment from "moment";
 import "./MessageForm.css";
 import cx from "classnames";
+import uuid from "uuid";
 import { WarningMessage } from "../../components/WarningMessage";
 
 export class MessageForm extends Component {
@@ -21,8 +22,10 @@ export class MessageForm extends Component {
     const newMessage = {
       userName: this.props.userName,
       messageDate: dateNow,
-      messageText: this.state.message
+      messageText: this.state.message,
+      id: uuid.v4()
     };
+    console.log(newMessage);
     this.props.onSubmitMessage(newMessage);
     this.setState({
       message: ""
