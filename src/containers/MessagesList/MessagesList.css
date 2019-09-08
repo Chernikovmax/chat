@@ -2,7 +2,7 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  background-color: #89a3ae;
+  background-color: #cdd9fe;
   width: 70vw;
   max-width: 70%;
   height: 100vh;
@@ -12,8 +12,17 @@
   padding-top: 10px;
   overflow-y: hidden;
   box-sizing: border-box;
+  border-right: 1px solid #6689f9;
 }
 .messages-list:hover {
-  overflow-y: auto;
+  overflow-y: scroll;
   padding-right: 13px;
+}
+
+.no-messages {
+  list-style-type: none;
+  text-align: center;
+  width: 100%;
+  font-size: 20px;
+  font-weight: bold;
 }

@@ -9,10 +9,12 @@ export class MessagesList extends Component {
   }
 
   componentDidMount() {
+    if (!this.props.messages.length) return;
     this.focusBottom();
   }
 
   componentDidUpdate() {
+    if (!this.props.messages.length) return;
     this.focusBottom();
   }
 
@@ -22,19 +24,28 @@ export class MessagesList extends Component {
 
   render() {
     const { messages } = this.props;
-    return (
-      <ul className="messages-list" ref={this.scrollRef}>
-        {messages.map((message, index) => {
-          return (
-            <UserMessage
-              userName={message.userName}
-              messageDate={message.messageDate}
-              messageText={message.messageText}
-              key={index}
-            />
-          );
-        })}
-      </ul>
-    );
+
+    if (!messages.length) {
+      return (
+        <ul className="messages-list">
+          <li className="no-messages">No messages yet!</li>
+        </ul>
+      );
+    } else {
+      return (
+        <ul className="messages-list" ref={this.scrollRef}>
+          {messages.map((message, index) => {
+            return (
+              <UserMessage
+                userName={message.userName}
+                messageDate={message.messageDate}
+                messageText={message.messageText}
+                key={message.id}
+              />
+            );
+          })}
+        </ul>
+      );
+    }
   }
 }
