@@ -36,6 +36,7 @@ const sendMessageFailure = error => ({
   payload: error.message
 });
 
+// Exporting action functions
 module.exports = {
   registerUserRequestSuccess,
   registerUserRequestFailure,

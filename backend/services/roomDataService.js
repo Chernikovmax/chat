@@ -5,25 +5,23 @@ const User = require("../models/Users");
 module.exports = async (roomId, userSocketId) => {
   try {
     await dbConnect;
-
-    // Searching needed room
-    const desiredRoom = await Room.findById(roomId);
-    console.log("DESIREDROOOOM", desiredRoom);
+    // Create chat room if we not trying to connect to the existing, or handling with existing
+    let room;
+    if (!roomId) {
+      room = await new Room();
+      await room.save();
+    } else {
+      // Searching needed room
+      room = await Room.findById(roomId);
+    }
     const currentUser = await User.find({ clientId: userSocketId });
-    desiredRoom.users.push({
+    room.users.push({
       userName: currentUser[0].userName,
       clientId: currentUser[0].clientId
     });
-    await desiredRoom.save();
+    await room.save();
 
-    // const arrayOfNames = [];
-
-    // // Going through the array of ids to get usernames in the desired room
-    // for (let i = 1; i < desiredRoom.users.length; i++) {
-    //   arrayOfNames.push(desiredRoom.users[i].userName);
-    // }
-
-    return desiredRoom;
+    return room;
   } catch (error) {
     console.error(error);
   }

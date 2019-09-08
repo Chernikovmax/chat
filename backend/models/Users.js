@@ -11,5 +11,5 @@ const UserModelSchema = new Schema({
   }
 });
 
-// Creating and exporting model "User", which will be used for creating records into DB.
+// Exporting model "User", which will be used for creating records into DB.
 module.exports = model("User", UserModelSchema);

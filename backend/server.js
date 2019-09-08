@@ -22,11 +22,10 @@ const sendMessageService = require("./services/sendMessageService");
 const connectionsStore = {};
 // Defined listening of the events and handles them
 io.on("connection", async client => {
+  let idOfCurrentChatRoom = null;
   connectionsStore[client.id] = client;
 
   console.log("user connected");
-  const newChatRoom = new Room();
-  newChatRoom.save();
 
   client.emit();
   // Adding new user to the DB
@@ -44,7 +43,7 @@ io.on("connection", async client => {
         // In case we get "acton.roomId", we need to redirect to existing chat room
         return (action.roomId
           ? roomDataService(action.roomId, client.id)
-          : roomDataService(newChatRoom._id, client.id)
+          : roomDataService(null, client.id)
         ).then(
           async roomData => {
             const { users } = roomData;
@@ -63,6 +62,7 @@ io.on("connection", async client => {
                 }
               }
             );
+            idOfCurrentChatRoom = roomData._id;
           },
           err => client.emit("action", actions.getRoomDataRequestFailure(err))
         );
@@ -71,15 +71,16 @@ io.on("connection", async client => {
         return sendMessageService(action.newMessage, action.roomId).then(
           async result => {
             try {
+              const { users } = result;
               // Notify client about successfully sent message
               client.emit("action", actions.sendMessageSuccess());
 
               // Sending updated room data to all users in current room except current user
-              result.usersArr.forEach(userObj => {
+              users.forEach(userObj => {
                 if (userObj.clientId !== client.id) {
                   connectionsStore[userObj.clientId].emit(
                     "action",
-                    actions.getRoomDataRequestSuccess(result.neededRoom)
+                    actions.getRoomDataRequestSuccess(result)
                   );
                 }
               });
@@ -96,9 +97,39 @@ io.on("connection", async client => {
 
   // There is also a special disconnect event that gets fire each time a user closes the tab.
   client.on("disconnect", async () => {
-    // Deleting a connection from the storage on disconnect
-    await User.deleteOne({ clientId: client.id });
-    delete connectionsStore[client.id];
+    try {
+      if (idOfCurrentChatRoom) {
+        await User.deleteOne({
+          clientId: client.id
+        });
+
+        const currentRoom = await Room.findById(idOfCurrentChatRoom);
+
+        currentRoom.users = currentRoom.users.filter(
+          user => user.clientId !== client.id
+        );
+        await currentRoom.save();
+
+        // Sending updated data of current room for all rest members
+        currentRoom.users.forEach(userObj => {
+          connectionsStore[userObj.clientId].emit(
+            "action",
+            actions.getRoomDataRequestSuccess(currentRoom)
+          );
+        });
+
+        // Delete current chat room if there are no users in it
+        if (!currentRoom.users.length) {
+          Room.findOneAndDelete({ _id: idOfCurrentChatRoom });
+        }
+      }
+
+      // Deleting connection from global object with socket connections
+      delete connectionsStore[client.id];
+    } catch (error) {
+      console.error(error);
+    }
+
     console.log(`User "${client.id}" was disconnected...`);
   });
 });
