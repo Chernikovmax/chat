@@ -11,5 +11,5 @@ module.exports = async (messageObj, roomId) => {
 
   const { users } = neededRoom;
 
-  return users;
+  return { usersArr: users, neededRoom };
 };

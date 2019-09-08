@@ -69,13 +69,19 @@ io.on("connection", async client => {
 
       case "SEND_MESSAGE":
         return sendMessageService(action.newMessage, action.roomId).then(
-          async usersArr => {
+          async result => {
             try {
-              usersArr.forEach(userObj => {
-                connectionsStore[userObj.clientId].emit(
-                  "action",
-                  actions.sendMessageSuccess()
-                );
+              // Notify client about successfully sent message
+              client.emit("action", actions.sendMessageSuccess());
+
+              // Sending updated room data to all users in current room except current user
+              result.usersArr.forEach(userObj => {
+                if (userObj.clientId !== client.id) {
+                  connectionsStore[userObj.clientId].emit(
+                    "action",
+                    actions.getRoomDataRequestSuccess(result.neededRoom)
+                  );
+                }
               });
             } catch (error) {
               console.error(error);
